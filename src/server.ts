@@ -16,14 +16,31 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
 
-  app.get(('/filteredimage?image_url'), async (req, res)=>{
-    const image_url = req.query;
+  app.get(('/filteredimage'), async (req, res)=>{
+    const {image_url} = req.query;
 
     if(!image_url){
-      return res.status(404).send('no url was called out')
+      return res.status(422).send('no url was called out')
     }
 
-    res.send(`This is your URL ${image_url}`)
+    try {
+      const imagePath = await filterImageFromURL(image_url);
+      res.sendFile(imagePath, error => {
+        if (error) {
+          console.log(error);
+          return res.status(500).send('We could not send this image');
+        }
+        deleteLocalFiles([imagePath]);
+      });
+
+    
+    } catch (error) {
+      console.log(error);
+        return res.status(500).send('There was an error trying to filter.');
+    }
+
+
+    //res.send(`This is your URL ${image_url}`)
   })
 
   // endpoint to filter an image from a public url.
