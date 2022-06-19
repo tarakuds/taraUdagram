@@ -16,8 +16,9 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
 
-  app.get(('/filteredimage'), async (req, res)=>{
+  app.get(('/filteredimage'), async (req:express.Request, res:express.Response)=>{
     const {image_url} = req.query;
+    res.status(200)
 
     if(!image_url){
       return res.status(422).send('no url was called out')
@@ -39,8 +40,6 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
         return res.status(500).send('There was an error trying to filter.');
     }
 
-
-    //res.send(`This is your URL ${image_url}`)
   })
 
   // endpoint to filter an image from a public url.
